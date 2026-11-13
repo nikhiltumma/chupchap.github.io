@@ -1,1 +1,609 @@
+# 1. Stop Word Removal
+
+# Initial NLTK Setup
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('omw-1.4')
+nltk.download('punkt_tab')
+
+
+ Stopword Elimination
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+# Custom input
+text = input("Enter your text: ")
+
+# Tokenize the text
+tokens = word_tokenize(text.lower())
+
+# Get English stopwords
+stop_words = set(stopwords.words('english'))
+
+# Remove stopwords
+filtered_tokens = [word for word in tokens if word not in stop_words and word.isalpha()]
+
+print("Original tokens:", tokens)
+print("Filtered tokens:", filtered_tokens)
+
+
+#2.Stemming.py
+
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+
+# Initialize stemmer
+stemmer = PorterStemmer()
+
+# Custom input
+text = input("Enter your text: ")
+tokens = word_tokenize(text)
+
+# Apply stemming
+stemmed_words = [stemmer.stem(word) for word in tokens]
+
+print("Original words:", tokens)
+print("Stemmed words:", stemmed_words)
+
+#3.Lemmatizer
+
+import nltk
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+
+# Download necessary NLTK resources
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+# Initialize lemmatizer
+lemmatizer = WordNetLemmatizer()
+
+# Custom input
+text = input("Enter your text: ")
+tokens = word_tokenize(text)
+
+# Apply lemmatization without POS
+lemmatized_words = [lemmatizer.lemmatize(word) for word in tokens]
+
+print("Original words:", tokens)
+print("Lemmatized words:", lemmatized_words)
+
+# With POS tagging for better results
+pos_tags = nltk.pos_tag(tokens)
+lemmatized_with_pos = []
+
+for word, pos in pos_tags:
+    if pos.startswith('V'):
+        lemmatized_with_pos.append(lemmatizer.lemmatize(word, pos='v'))
+    elif pos.startswith('N'):
+        lemmatized_with_pos.append(lemmatizer.lemmatize(word, pos='n'))
+    elif pos.startswith('R'):
+        lemmatized_with_pos.append(lemmatizer.lemmatize(word, pos='r'))
+    elif pos.startswith('J'):  # Adjective
+        lemmatized_with_pos.append(lemmatizer.lemmatize(word, pos='a'))
+    else:
+        lemmatized_with_pos.append(lemmatizer.lemmatize(word))
+
+print("Lemmatized with POS:", lemmatized_with_pos)
+
+#4.Pos_Tagging
+
+import nltk
+from nltk.tokenize import word_tokenize
+
+# Custom input
+text = input("Enter your text: ")
+tokens = word_tokenize(text)
+
+# POS tagging
+pos_tags = nltk.pos_tag(tokens)
+
+print("POS Tags:", pos_tags)
+
+# Explanation of common POS tags
+pos_explanations = {
+    'DT': 'Determiner',
+    'JJ': 'Adjective',
+    'NN': 'Noun, singular',
+    'NNS': 'Noun, plural',
+    'VBZ': 'Verb, 3rd person singular present',
+    'IN': 'Preposition',
+    'RB': 'Adverb'
+}
+
+for word, pos in pos_tags:
+    explanation = pos_explanations.get(pos, 'Other')
+    print(f"{word}: {pos} ({explanation})")
+
+  # 5 Lexical.py
+
+import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize
+from collections import Counter
+import re
+
+def lexical_analysis(text):
+    # Basic statistics
+    sentences = sent_tokenize(text)
+    words = word_tokenize(text.lower())
+
+    # Remove punctuation
+    words = [word for word in words if word.isalpha()]
+
+    # Analysis
+    num_sentences = len(sentences)
+    num_words = len(words)
+    num_unique_words = len(set(words))
+    avg_word_length = sum(len(word) for word in words) / len(words)
+
+    # Word frequency
+    word_freq = Counter(words)
+    most_common = word_freq.most_common(10)
+
+    # Lexical diversity
+    lexical_diversity = num_unique_words / num_words
+
+    print(f"Number of sentences: {num_sentences}")
+    print(f"Number of words: {num_words}")
+    print(f"Number of unique words: {num_unique_words}")
+    print(f"Average word length: {avg_word_length:.2f}")
+    print(f"Lexical diversity: {lexical_diversity:.2f}")
+    print(f"Most common words: {most_common}")
+
+    return {
+        'sentences': num_sentences,
+        'words': num_words,
+        'unique_words': num_unique_words,
+        'avg_word_length': avg_word_length,
+        'lexical_diversity': lexical_diversity,
+        'word_frequency': word_freq
+    }
+
+# Custom input
+sample_text = input("Enter your text: ")
+
+analysis_results = lexical_analysis(sample_text)
+
+# 6.Senti_analysis
+
+from textblob import TextBlob
+import pandas as pd
+
+# Custom customer reviews
+reviews = []
+
+n = int(input("Enter the number of reviews: "))
+
+for i in range(n):
+    review = input(f"Enter review {i+1}: ")
+    reviews.append(review)
+
+def analyze_sentiment_textblob(text):
+    blob = TextBlob(text)
+    polarity = blob.sentiment.polarity
+
+    if polarity > 0.1:
+        return 'Positive'
+    elif polarity < -0.1:
+        return 'Negative'
+    else:
+        return 'Neutral'
+
+# Analyze reviews
+results = []
+for review in reviews:
+    sentiment = analyze_sentiment_textblob(review)
+    polarity = TextBlob(review).sentiment.polarity
+    results.append({
+        'review': review,
+        'sentiment': sentiment,
+        'polarity': polarity
+    })
+
+df = pd.DataFrame(results)
+print(df)
+
+# 7.Web_usage.py
+import re
+import pandas as pd
+from datetime import datetime
+from collections import Counter
+
+# Custom log entries
+log_data = []
+
+n = int(input("Enter the number of log entries: "))
+
+for i in range(n):
+    log = input(f"Enter log entry {i+1}: ")
+    log_data.append(log)
+
+def parse_log_line(line):
+    pattern = r'(\d+\.\d+\.\d+\.\d+) - - \[(.*?)\] "(.*?)" (\d+) (\d+) "(.*?)" "(.*?)"'
+    match = re.match(pattern, line)
+
+    if match:
+        return {
+            'ip': match.group(1),
+            'timestamp': match.group(2),
+            'request': match.group(3),
+            'status': int(match.group(4)),
+            'size': int(match.group(5)),
+            'referrer': match.group(6),
+            'user_agent': match.group(7)
+        }
+    return None
+
+def analyze_web_logs(log_entries):
+    parsed_logs = []
+
+    for entry in log_entries:
+        parsed = parse_log_line(entry)
+        if parsed:
+            # Extract URL from request
+            request_parts = parsed['request'].split()
+            if len(request_parts) >= 2:
+                parsed['url'] = request_parts[1]
+                parsed['method'] = request_parts[0]
+            parsed_logs.append(parsed)
+
+    df = pd.DataFrame(parsed_logs)
+
+    # Basic analytics
+    print("=== Web Usage Analytics ===")
+    print(f"Total requests: {len(df)}")
+    print(f"Unique visitors: {df['ip'].nunique()}")
+    print(f"Most visited pages:")
+    print(df['url'].value_counts().head())
+    print(f"\nStatus code distribution:")
+    print(df['status'].value_counts())
+
+    # Page views by IP
+    print(f"\nPage views by IP:")
+    print(df.groupby('ip')['url'].count().sort_values(ascending=False))
+
+    return df
+
+# Analyze logs
+df = analyze_web_logs(log_data)
+
+
+# 8.Seo.py
+import re
+from collections import Counter
+
+def keyword_stuffing_detector(text, keyword):
+    """Detect keyword stuffing in text"""
+    words = text.lower().split()
+    keyword_count = words.count(keyword.lower())
+    total_words = len(words)
+
+    keyword_density = (keyword_count / total_words) * 100
+
+    print(f"Keyword: {keyword}")
+    print(f"Keyword count: {keyword_count}")
+    print(f"Total words: {total_words}")
+    print(f"Keyword density: {keyword_density:.2f}%")
+
+    if keyword_density > 5:
+        print("WARNING: Possible keyword stuffing detected!")
+    elif keyword_density > 2:
+        print("CAUTION: High keyword density")
+    else:
+        print("Keyword density is within acceptable range")
+
+
+def generate_keyword_stuffed_content(keyword, target_density=10):
+    """Generate content with keyword stuffing (for demonstration)"""
+    base_content = f"Welcome to our website about {keyword}. "
+
+    # Calculate how many times to repeat keyword
+    base_words = len(base_content.split())
+    target_keyword_count = int((target_density / 100) * base_words / (1 - target_density / 100))
+
+    stuffed_content = base_content
+    for i in range(target_keyword_count):
+        stuffed_content += f"{keyword} "
+
+    stuffed_content += f"is very important. {keyword} helps you find the best {keyword} solutions."
+
+    return stuffed_content
+
+
+def detect_hidden_text(html_content):
+    """Detect potential hidden text techniques"""
+    hidden_patterns = [
+        r'style\s*=\s*["\'].*?color\s*:\s*white.*?["\']',  # White text on white background
+        r'style\s*=\s*["\'].*?display\s*:\s*none.*?["\']',  # Hidden elements
+        r'style\s*=\s*["\'].*?visibility\s*:\s*hidden.*?["\']',  # Invisible elements
+        r'style\s*=\s*["\'].*?font-size\s*:\s*0.*?["\']',  # Zero font size
+    ]
+
+    potential_hidden = []
+    for pattern in hidden_patterns:
+        matches = re.findall(pattern, html_content, re.IGNORECASE)
+        potential_hidden.extend(matches)
+
+    return potential_hidden
+
+
+def analyze_meta_tags(html_content):
+    """Analyze meta tags for potential spam"""
+    meta_pattern = r'<meta[^>]*name\s*=\s*["\']keywords["\'][^>]*content\s*=\s*["\']([^"\']*)["\']'
+    keywords_match = re.search(meta_pattern, html_content, re.IGNORECASE)
+
+    if keywords_match:
+        keywords = keywords_match.group(1)
+        keyword_list = [k.strip() for k in keywords.split(',')]
+
+        print(f"Meta keywords found: {len(keyword_list)}")
+        print(f"Keywords: {keywords}")
+
+        # Check for keyword repetition
+        keyword_counts = Counter(keyword_list)
+        repeated_keywords = {k: v for k, v in keyword_counts.items() if v > 1}
+
+        if repeated_keywords:
+            print("WARNING: Repeated keywords in meta tags:")
+            for keyword, count in repeated_keywords.items():
+                print(f"  {keyword}: {count} times")
+
+
+# Custom input
+sample_text = input("Enter your website content: ")
+keyword = input("Enter the keyword to check: ")
+
+keyword_stuffing_detector(sample_text, keyword)
+
+print("\n" + "="*50)
+
+stuffed_content = generate_keyword_stuffed_content(keyword, 8)
+print("Generated keyword-stuffed content:")
+print(stuffed_content)
+
+keyword_stuffing_detector(stuffed_content, keyword)
+
+# 9.Seo_runtime
+
+
+import re
+from collections import Counter
+from urllib.parse import urlparse
+
+import requests
+from bs4 import BeautifulSoup
+
+STOP_WORDS = {
+    "the", "a", "an", "and", "or", "but", "is", "are", "was",
+    "were", "to", "of", "in", "on", "for", "with", "by", "as",
+    "at", "from", "it", "this", "that", "be", "has", "have",
+    "had", "you", "your", "our", "we", "they", "their", "he",
+    "she", "his", "her", "if", "can", "will", "all", "across",
+    "who", "what", "how", "do", "does", "not", "both", "into"
+}
+
+
+def fetch_website(url):
+    """Fetch a public website and return its HTML."""
+    parsed = urlparse(url)
+
+    if parsed.scheme not in ("http", "https") or not parsed.hostname:
+        raise ValueError("Enter a valid HTTP or HTTPS URL.")
+
+    response = requests.get(
+        url,
+        timeout=20,
+        headers={"User-Agent": "SEO-Audit-Tool/1.0"},
+        allow_redirects=True
+    )
+    response.raise_for_status()
+
+    content_type = response.headers.get("Content-Type", "")
+    if "html" not in content_type.lower():
+        raise ValueError("The URL did not return an HTML page.")
+
+    return response.text, response.url, response.status_code
+
+
+def get_visible_text(soup):
+    """Extract text while excluding non-visible/code elements."""
+    copy_soup = BeautifulSoup(str(soup), "html.parser")
+
+    for tag in copy_soup.find_all(
+        ["script", "style", "noscript", "template", "svg"]
+    ):
+        tag.decompose()
+
+    return copy_soup.get_text(" ", strip=True)
+
+
+def keyword_stuffing_detector(text, keyword):
+    """Measure exact phrase occurrences and approximate density."""
+    words = re.findall(r"\b[\w'-]+\b", text.lower())
+    keyword_words = re.findall(r"\b[\w'-]+\b", keyword.lower())
+
+    if not words:
+        print("No readable page text found.")
+        return
+
+    if not keyword_words:
+        print("No keyword entered.")
+        return
+
+    # Match the complete phrase, ignoring case and extra whitespace.
+    phrase = r"\s+".join(re.escape(w) for w in keyword_words)
+    occurrences = list(re.finditer(
+        r"(?<!\w)" + phrase + r"(?!\w)",
+        text,
+        re.IGNORECASE
+    ))
+
+    count = len(occurrences)
+    total_words = len(words)
+
+    # Density counts the words in each phrase occurrence.
+    density = (count * len(keyword_words) / total_words) * 100
+
+    print(f"\nKeyword/phrase: {keyword}")
+    print(f"Occurrences: {count}")
+    print(f"Total words: {total_words}")
+    print(f"Approximate keyword density: {density:.2f}%")
+
+    if density > 5:
+        print("WARNING: High keyword density; review manually.")
+    elif density > 2:
+        print("CAUTION: Check whether repetition is natural.")
+    else:
+        print("No high-density warning from this threshold.")
+
+    print("Note: Density thresholds are heuristics, not Google rules.")
+
+
+def analyze_repeated_words(text):
+    """Report frequently repeated meaningful words."""
+    words = re.findall(r"\b[a-z][a-z'-]{2,}\b", text.lower())
+    counts = Counter(w for w in words if w not in STOP_WORDS)
+
+    print("\n=== Most Frequent Meaningful Words ===")
+    for word, count in counts.most_common(15):
+        print(f"{word}: {count}")
+
+
+def detect_hidden_text(soup):
+    """Flag suspicious inline CSS patterns for manual review."""
+    patterns = {
+        "display:none": r"display\s*:\s*none\b",
+        "visibility:hidden": r"visibility\s*:\s*hidden\b",
+        "zero font size": r"font-size\s*:\s*0(?:px|em|rem|%)?\b",
+        "white text": r"color\s*:\s*(?:white\b|#fff(?:fff)?\b|rgb\(\s*255\s*,\s*255\s*,\s*255\s*\))",
+    }
+
+    findings = []
+
+    for tag in soup.find_all(style=True):
+        style = tag.get("style", "")
+        for label, pattern in patterns.items():
+            if re.search(pattern, style, re.IGNORECASE):
+                findings.append({
+                    "pattern": label,
+                    "tag": tag.name,
+                    "style": style[:180]
+                })
+
+    print("\n=== Potential Hidden Text Indicators ===")
+
+    if not findings:
+        print("No matching inline CSS patterns found.")
+    else:
+        for item in findings:
+            print(
+                f"- {item['pattern']} | "
+                f"<{item['tag']}> | {item['style']}"
+            )
+
+    print("These are indicators, not proof of deceptive hidden text.")
+
+
+def analyze_meta_tags(soup):
+    """Inspect title, description, and repeated meta keywords."""
+    print("\n=== SEO Metadata ===")
+
+    title_tag = soup.find("title")
+    title = title_tag.get_text(" ", strip=True) if title_tag else ""
+
+    description_tag = soup.find(
+        "meta", attrs={"name": re.compile(r"^description$", re.I)}
+    )
+    description = (
+        description_tag.get("content", "").strip()
+        if description_tag else ""
+    )
+
+    keywords_tag = soup.find(
+        "meta", attrs={"name": re.compile(r"^keywords$", re.I)}
+    )
+    keywords = keywords_tag.get("content", "") if keywords_tag else ""
+
+    print(f"Title: {title or '[Missing]'}")
+    print(f"Title length: {len(title)} characters")
+    print(f"Meta description: {description or '[Missing]'}")
+    print(f"Description length: {len(description)} characters")
+
+    if not keywords:
+        print("Meta keywords tag: Not present")
+        return
+
+    keyword_list = [
+        item.strip().lower()
+        for item in keywords.split(",")
+        if item.strip()
+    ]
+    counts = Counter(keyword_list)
+    repeated = {k: v for k, v in counts.items() if v > 1}
+
+    print(f"Meta keywords: {keywords}")
+    print(f"Number of keyword entries: {len(keyword_list)}")
+
+    if repeated:
+        print("Repeated meta keywords:")
+        for word, count in repeated.items():
+            print(f"- {word}: {count} times")
+    else:
+        print("No duplicate meta keyword entries.")
+
+    print("Meta keywords are not a meaningful Google ranking signal.")
+
+
+def analyze_website(url, target_keyword):
+    html, final_url, status = fetch_website(url)
+    soup = BeautifulSoup(html, "html.parser")
+    text = get_visible_text(soup)
+
+    print("\n" + "=" * 55)
+    print("WEBSITE SEO SPAM SCREENING REPORT")
+    print("=" * 55)
+    print(f"Requested URL: {url}")
+    print(f"Final URL: {final_url}")
+    print(f"HTTP status: {status}")
+    print(f"HTML title: {soup.title.get_text(strip=True) if soup.title else '[Missing]'}")
+    print(f"Visible word count: {len(text.split())}")
+
+    analyze_meta_tags(soup)
+    keyword_stuffing_detector(text, target_keyword)
+    analyze_repeated_words(text)
+    detect_hidden_text(soup)
+
+    print("\n=== Audit Limitations ===")
+    print("- Only the fetched page is analyzed.")
+    print("- JavaScript-rendered text may be missed.")
+    print("- External CSS and computed visibility are not evaluated.")
+    print("- Repeated words can be natural in legal/service pages.")
+    print("- Review flagged content before concluding it is spam.")
+    print("=" * 55)
+
+
+if __name__ == "__main__":
+    url = input("Enter website URL: ").strip()
+
+    keyword = input("Enter target keyword/phrase: ").strip()
+
+    try:
+        analyze_website(url, keyword)
+    except requests.RequestException as error:
+        print(f"Website request failed: {error}")
+    except (ValueError, Exception) as error:
+        print(f"Analysis failed: {error}")
+
+
+
+
+
+
+
+ # pip install requests beautifulsoup4 
 
